@@ -1,47 +1,90 @@
 package com.example.matchlist
 
 import android.os.Bundle
+import android.widget.Button
+import android.widget.EditText
+import android.widget.TextView
 import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.matchlist.ui.theme.MatchListTheme
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
+
+    // Nossas instâncias de backend
+    private lateinit var auth: FirebaseAuth
+    private lateinit var authManager: AuthManager
+
+    // Nossos elementos de tela (XML)
+    private lateinit var editEmail: EditText
+    private lateinit var editSenha: EditText
+    private lateinit var btnCadastrar: Button
+    private lateinit var btnEntrar: Button
+    private lateinit var txtResultado: TextView
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            MatchListTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+        // Conecta esta Activity ao nosso arquivo XML
+        setContentView(R.layout.activity_main)
+
+        // Inicializa o Firebase e a nossa classe de gerenciamento
+        auth = Firebase.auth
+        authManager = AuthManager(auth)
+
+        // Mapeia os elementos do XML para as variáveis do Kotlin
+        mapearComponentesXml()
+
+        // Configura as ações dos botões
+        configurarBotoes()
+    }
+
+    private fun mapearComponentesXml() {
+        editEmail = findViewById(R.id.editEmail)
+        editSenha = findViewById(R.id.editSenha)
+        btnCadastrar = findViewById(R.id.btnCadastrar)
+        btnEntrar = findViewById(R.id.btnEntrar)
+        txtResultado = findViewById(R.id.txtResultado)
+    }
+
+    private fun configurarBotoes() {
+        btnCadastrar.setOnClickListener {
+            val email = editEmail.text.toString()
+            val senha = editSenha.text.toString()
+
+            if (email.isNotEmpty() && senha.isNotEmpty()) {
+                txtResultado.text = "Carregando..."
+
+                // Delega a responsabilidade para o AuthManager
+                authManager.cadastrarUsuario(email, senha) { sucesso, resposta ->
+                    if (sucesso) {
+                        txtResultado.text = "✅ Cadastrado! UID: $resposta"
+                    } else {
+                        txtResultado.text = "❌ Erro: $resposta"
+                    }
                 }
+            } else {
+                txtResultado.text = "Preencha e-mail e senha!"
             }
         }
-    }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
+        btnEntrar.setOnClickListener {
+            val email = editEmail.text.toString()
+            val senha = editSenha.text.toString()
 
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    MatchListTheme {
-        Greeting("Android")
+            if (email.isNotEmpty() && senha.isNotEmpty()) {
+                txtResultado.text = "Carregando..."
+
+                // Delega a responsabilidade para o AuthManager
+                authManager.loginUsuario(email, senha) { sucesso, resposta ->
+                    if (sucesso) {
+                        txtResultado.text = "✅ Logado! UID: $resposta"
+                    } else {
+                        txtResultado.text = "❌ Falha no login: $resposta"
+                    }
+                }
+            } else {
+                txtResultado.text = "Preencha e-mail e senha!"
+            }
+        }
     }
 }
