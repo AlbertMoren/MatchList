@@ -11,11 +11,11 @@ import com.google.firebase.ktx.Firebase
 
 class MainActivity : ComponentActivity() {
 
-    // Nossas instâncias de backend
+    //backend
     private lateinit var auth: FirebaseAuth
     private lateinit var authManager: AuthManager
 
-    // Nossos elementos de tela (XML)
+    //elementos de tela (XML)
     private lateinit var editEmail: EditText
     private lateinit var editSenha: EditText
     private lateinit var btnCadastrar: Button
@@ -24,17 +24,13 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // Conecta esta Activity ao nosso arquivo XML
         setContentView(R.layout.activity_main)
 
-        // Inicializa o Firebase e a nossa classe de gerenciamento
         auth = Firebase.auth
         authManager = AuthManager(auth)
 
-        // Mapeia os elementos do XML para as variáveis do Kotlin
         mapearComponentesXml()
 
-        // Configura as ações dos botões
         configurarBotoes()
     }
 
@@ -54,7 +50,7 @@ class MainActivity : ComponentActivity() {
             if (email.isNotEmpty() && senha.isNotEmpty()) {
                 txtResultado.text = "Carregando..."
 
-                // Delega a responsabilidade para o AuthManager
+
                 authManager.cadastrarUsuario(email, senha) { sucesso, resposta ->
                     if (sucesso) {
                         txtResultado.text = "✅ Cadastrado! UID: $resposta"
@@ -74,7 +70,6 @@ class MainActivity : ComponentActivity() {
             if (email.isNotEmpty() && senha.isNotEmpty()) {
                 txtResultado.text = "Carregando..."
 
-                // Delega a responsabilidade para o AuthManager
                 authManager.loginUsuario(email, senha) { sucesso, resposta ->
                     if (sucesso) {
                         txtResultado.text = "✅ Logado! UID: $resposta"
