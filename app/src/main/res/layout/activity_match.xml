@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="O que você acha disso?"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="32dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="#E0E0E0"
+        android:padding="32dp"
+        android:layout_marginBottom="32dp">
+
+        <TextView
+            android:id="@+id/txtNomeProduto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fone de Ouvido Pro"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/txtPrecoProduto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="R$ 299,90"
+            android:textSize="20sp"
+            android:layout_marginTop="8dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/btnDislike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="❌ Dislike"
+            android:backgroundTint="#D32F2F"
+            android:layout_marginEnd="16dp" />
+
+        <Button
+            android:id="@+id/btnLike"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="⭐ Like"
+            android:backgroundTint="#388E3C" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/txtStatusMatch"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="..."
+        android:textSize="16sp" />
+
+</LinearLayout>
