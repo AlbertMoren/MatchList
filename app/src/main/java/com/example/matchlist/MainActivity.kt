@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
+
 class MainActivity : ComponentActivity() {
 
     //backend
@@ -53,7 +54,10 @@ class MainActivity : ComponentActivity() {
 
                 authManager.cadastrarUsuario(email, senha) { sucesso, resposta ->
                     if (sucesso) {
-                        txtResultado.text = "✅ Cadastrado! UID: $resposta"
+                        val intent = android.content.Intent(this, MatchActivity::class.java)
+                        intent.putExtra("USER_UID", resposta)
+                        startActivity(intent)
+                        finish()
                     } else {
                         txtResultado.text = "❌ Erro: $resposta"
                     }
@@ -72,7 +76,10 @@ class MainActivity : ComponentActivity() {
 
                 authManager.loginUsuario(email, senha) { sucesso, resposta ->
                     if (sucesso) {
-                        txtResultado.text = "✅ Logado! UID: $resposta"
+                        val intent = android.content.Intent(this, MatchActivity::class.java)
+                        intent.putExtra("USER_UID",resposta)
+                        startActivity(intent)
+                        finish()
                     } else {
                         txtResultado.text = "❌ Falha no login: $resposta"
                     }
