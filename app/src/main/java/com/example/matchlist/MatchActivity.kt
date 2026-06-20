@@ -69,7 +69,8 @@ class MatchActivity : ComponentActivity() {
                 firestoreManager.salvarNaWishlist(userUid, id, nome, preco) { sucesso, msg ->
                     if (sucesso) {
                         txtStatusMatch.text = "⭐ Salvo! Indo para o próximo..."
-                        proximoProduto() // Só pula se der sucesso ao salvar
+                        firestoreManager.registrarLog("NOVO_LIKE", userUid, id)
+                        proximoProduto()
                     } else {
                         txtStatusMatch.text = "❌ Erro ao salvar: $msg"
                     }
@@ -78,6 +79,13 @@ class MatchActivity : ComponentActivity() {
         }
 
         btnDislike.setOnClickListener {
+            if (indiceAtual < listaProdutos.size) {
+                val produto = listaProdutos[indiceAtual]
+                val id = produto["id"] ?: ""
+
+                firestoreManager.registrarLog("NOVO_DISLIKE", userUid, id)
+            }
+
             txtStatusMatch.text = "❌ Pulou!"
             proximoProduto()
         }

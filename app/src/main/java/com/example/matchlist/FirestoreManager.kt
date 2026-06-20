@@ -2,6 +2,7 @@ package com.example.matchlist
 
 import android.R
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.FieldValue
 
 class FirestoreManager(private val db: FirebaseFirestore) {
     fun salvarNaWishlist(uid: String, produtoId: String, produtoNome: String, preco: String, onResult: (Boolean, String) -> Unit) {
@@ -44,6 +45,25 @@ class FirestoreManager(private val db: FirebaseFirestore) {
             }
             .addOnFailureListener {
                 onResult(false,emptyList())
+            }
+    }
+
+    fun registrarLog(acao: String, userId: String, produtoId: String) {
+        val dadosLog = hashMapOf(
+            "acao" to acao,
+            "produtoId" to produtoId,
+            "dataHora" to FieldValue.serverTimestamp()
+        )
+
+        db.collection("admin_logs")
+            .document(userId)
+            .collection("logs")
+            .add(dadosLog)
+            .addOnSuccessListener {
+                print("Log gravado com sucesso na pasta do usuário: $acao")
+            }
+            .addOnFailureListener { e ->
+                print("Erro ao gravar log: ${e.message}")
             }
     }
 }
