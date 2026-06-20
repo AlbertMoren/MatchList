@@ -28,7 +28,8 @@ class MainActivity : ComponentActivity() {
         setContentView(R.layout.activity_main)
 
         auth = Firebase.auth
-        authManager = AuthManager(auth)
+        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
+        authManager = AuthManager(auth,db)
 
         mapearComponentesXml()
 
@@ -44,27 +45,10 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun configurarBotoes() {
+
         btnCadastrar.setOnClickListener {
-            val email = editEmail.text.toString()
-            val senha = editSenha.text.toString()
-
-            if (email.isNotEmpty() && senha.isNotEmpty()) {
-                txtResultado.text = "Carregando..."
-
-
-                authManager.cadastrarUsuario(email, senha) { sucesso, resposta ->
-                    if (sucesso) {
-                        val intent = android.content.Intent(this, MatchActivity::class.java)
-                        intent.putExtra("USER_UID", resposta)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        txtResultado.text = "❌ Erro: $resposta"
-                    }
-                }
-            } else {
-                txtResultado.text = "Preencha e-mail e senha!"
-            }
+            val intent = android.content.Intent(this, CadastroUsuarioActivity::class.java)
+            startActivity(intent)
         }
 
         btnEntrar.setOnClickListener {

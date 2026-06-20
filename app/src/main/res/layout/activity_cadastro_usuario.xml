@@ -9,13 +9,21 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MatchList - Autenticação"
+        android:text="Criar Nova Conta"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="32dp" />
 
     <EditText
-        android:id="@+id/editEmail"
+        android:id="@+id/editNomeCadastro"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Seu Nome Completo"
+        android:inputType="textPersonName"
+        android:layout_marginBottom="16dp" />
+
+    <EditText
+        android:id="@+id/editEmailCadastro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="E-mail"
@@ -23,39 +31,24 @@
         android:layout_marginBottom="16dp" />
 
     <EditText
-        android:id="@+id/editSenha"
+        android:id="@+id/editSenhaCadastro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Senha"
+        android:hint="Senha (mínimo 6 caracteres)"
         android:inputType="textPassword"
         android:layout_marginBottom="24dp" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/btnFinalizarCadastro"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center">
-
-        <Button
-            android:id="@+id/btnCadastrar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Criar nova conta"
-            android:layout_marginEnd="16dp" />
-
-        <Button
-            android:id="@+id/btnEntrar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Entrar" />
-    </LinearLayout>
+        android:text="Cadastrar e Entrar" />
 
     <TextView
-        android:id="@+id/txtResultado"
+        android:id="@+id/txtResultadoCadastro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:text=""
         android:textSize="16sp" />
-
 </LinearLayout>
