@@ -1,19 +1,25 @@
 package com.example.matchlist
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 
 class MatchActivity : ComponentActivity() {
 
     private lateinit var btnLike: Button
     private lateinit var btnDislike: Button
     private lateinit var txtStatusMatch: TextView
+    private lateinit var txtNomeProduto: TextView
+    private lateinit var txtPrecoProduto: TextView
+
     private var userUid: String = ""
+
+    private var listaProdutos: List<Map<String, String>> = emptyList()
+    private var indiceAtual = 0
+
     private lateinit var db: FirebaseFirestore
     private lateinit var firestoreManager: FirestoreManager
 
@@ -22,34 +28,81 @@ class MatchActivity : ComponentActivity() {
         setContentView(R.layout.activity_match)
 
         userUid = intent.getStringExtra("USER_UID") ?: ""
-        db = Firebase.firestore
+
+        db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
         firestoreManager = FirestoreManager(db)
 
         btnLike = findViewById(R.id.btnLike)
         btnDislike = findViewById(R.id.btnDislike)
         txtStatusMatch = findViewById(R.id.txtStatusMatch)
+        txtNomeProduto = findViewById(R.id.txtNomeProduto)
+        txtPrecoProduto = findViewById(R.id.txtPrecoProduto)
 
-        txtStatusMatch.text = "Bem-vindo! Seu UID: $userUid"
+        txtStatusMatch.text = "Carregando vitrine..."
 
-        // Valos mocados para teste(Remover isso depois)
-        val produtoIdFake = "prod_999"
-        val produtoNomeFake = "Fone de Ouvido Pro"
-        val precoFake = "299.90"
+        firestoreManager.BuscarTodosOsProdutos { sucesso, produtos ->
+            if (sucesso) {
+                if (produtos.isNotEmpty()) {
+                    listaProdutos = produtos
+                    indiceAtual = 0
+                    exibirProdutoAtual()
+                    txtStatusMatch.text = "Produtos carregados!"
+                } else {
+                    txtStatusMatch.text = "Erro: Banco acessado, mas a coleção está vazia (nomes diferentes?)."
+                    desativarBotoes()
+                }
+            } else {
+                txtStatusMatch.text = "Erro: Permissão negada ou sem internet. Faça o login novamente!"
+                desativarBotoes()
+            }
+        }
 
         btnLike.setOnClickListener {
-            txtStatusMatch.text = "Salvando no banco de dados..."
-            firestoreManager.salvarNaWishlist(userUid,produtoIdFake,produtoNomeFake,precoFake){
-                sucesso, mensagem ->
-                if (sucesso){
-                    txtStatusMatch.text = "⭐ $mensagem"
-                }else{
-                    txtStatusMatch.text = "❌ $mensagem"
+            if (indiceAtual < listaProdutos.size) {
+                val produto = listaProdutos[indiceAtual]
+                val id = produto["id"] ?: ""
+                val nome = produto["nome"] ?: ""
+                val preco = produto["preco"] ?: ""
+
+                txtStatusMatch.text = "Salvando..."
+
+                firestoreManager.salvarNaWishlist(userUid, id, nome, preco) { sucesso, msg ->
+                    if (sucesso) {
+                        txtStatusMatch.text = "⭐ Salvo! Indo para o próximo..."
+                        proximoProduto() // Só pula se der sucesso ao salvar
+                    } else {
+                        txtStatusMatch.text = "❌ Erro ao salvar: $msg"
+                    }
                 }
             }
         }
 
         btnDislike.setOnClickListener {
-            txtStatusMatch.text = "Clicou em DISLIKE! Pulando produto..."
+            txtStatusMatch.text = "❌ Pulou!"
+            proximoProduto()
         }
+    }
+
+    private fun exibirProdutoAtual() {
+        if (indiceAtual < listaProdutos.size) {
+            val produto = listaProdutos[indiceAtual]
+            txtNomeProduto.text = produto["nome"]
+            txtPrecoProduto.text = "R$ ${produto["preco"]}"
+        } else {
+            txtNomeProduto.text = "Fim da fila!"
+            txtPrecoProduto.text = "Você já viu tudo."
+            txtStatusMatch.text = ""
+            desativarBotoes()
+        }
+    }
+
+    private fun proximoProduto() {
+        indiceAtual++
+        exibirProdutoAtual()
+    }
+
+    private fun desativarBotoes() {
+        btnLike.visibility = View.GONE
+        btnDislike.visibility = View.GONE
     }
 }
