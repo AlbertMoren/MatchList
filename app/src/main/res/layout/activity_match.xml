@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center"
-    android:padding="24dp">
+    android:background="@color/md_background"
+    android:padding="24dp"
+    android:gravity="center">
 
     <TextView
         android:layout_width="wrap_content"
@@ -12,62 +14,71 @@
         android:text="O que você acha disso?"
         android:textSize="22sp"
         android:textStyle="bold"
+        android:textColor="@color/md_text_primary"
         android:layout_marginBottom="32dp" />
 
-    <LinearLayout
+    <!-- card do Swipe -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardProduto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:background="#E0E0E0"
-        android:padding="32dp"
-        android:layout_marginBottom="32dp">
+        android:layout_marginBottom="32dp"
+        app:cardCornerRadius="16dp"
+        app:cardElevation="8dp"
+        app:strokeColor="@color/md_primary"
+        app:strokeWidth="1dp">
 
-        <TextView
-            android:id="@+id/txtNomeProduto"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Fone de Ouvido Pro"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:gravity="center">
 
-        <TextView
-            android:id="@+id/txtPrecoProduto"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="R$ 299,90"
-            android:textSize="20sp"
-            android:layout_marginTop="8dp" />
-    </LinearLayout>
+            <TextView
+                android:id="@+id/txtNomeProduto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Fone de Ouvido Pro"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/md_text_primary" />
 
+            <TextView
+                android:id="@+id/txtPrecoProduto"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="R$ 299,90"
+                android:textSize="20sp"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/md_primary" />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- Botões de ação seguindo o padrão Material -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnDislike"
+            style="@style/Widget.Material3.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="❌ Dislike"
-            android:backgroundTint="#D32F2F"
+            android:text="Dislike"
+            app:strokeColor="@color/md_accent_dislike"
+            android:textColor="@color/md_accent_dislike"
             android:layout_marginEnd="16dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnLike"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="⭐ Like"
-            android:backgroundTint="#388E3C" />
+            android:text="Like"
+            app:backgroundTint="@color/md_accent_like"
+            android:textColor="@android:color/white" />
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/txtStatusMatch"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="..."
-        android:textSize="16sp" />
 
 </LinearLayout>

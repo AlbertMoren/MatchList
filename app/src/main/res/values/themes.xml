@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="Theme.MatchList" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.MatchList" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/md_primary</item>
+        <item name="colorOnPrimary">@color/md_surface</item>
+        <item name="colorSecondary">@color/md_primary_dark</item>
+        <item name="android:colorBackground">@color/md_background</item>
+    </style>
 </resources>
