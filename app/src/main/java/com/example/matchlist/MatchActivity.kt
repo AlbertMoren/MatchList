@@ -40,7 +40,7 @@ class MatchActivity : ComponentActivity() {
 
         txtStatusMatch.text = "Carregando vitrine..."
 
-        firestoreManager.BuscarTodosOsProdutos { sucesso, produtos ->
+        firestoreManager.buscarProdutosNaoVistos(userUid) { sucesso, produtos ->
             if (sucesso) {
                 if (produtos.isNotEmpty()) {
                     listaProdutos = produtos
@@ -48,7 +48,9 @@ class MatchActivity : ComponentActivity() {
                     exibirProdutoAtual()
                     txtStatusMatch.text = "Produtos carregados!"
                 } else {
-                    txtStatusMatch.text = "Erro: Banco acessado, mas a coleção está vazia (nomes diferentes?)."
+                    txtStatusMatch.text = "Você já viu todos os produtos do estoque!"
+                    txtNomeProduto.text = "Fim da fila!"
+                    txtPrecoProduto.text = "Volte mais tarde"
                     desativarBotoes()
                 }
             } else {
@@ -88,6 +90,13 @@ class MatchActivity : ComponentActivity() {
 
             txtStatusMatch.text = "❌ Pulou!"
             proximoProduto()
+        }
+
+        val btnVerWishlist = findViewById<Button>(R.id.bntVerWishList)
+        btnVerWishlist.setOnClickListener {
+            val intent = android.content.Intent(this, WishlistActivity::class.java)
+            intent.putExtra("USER_UID",userUid)
+            startActivity(intent)
         }
     }
 
