@@ -30,6 +30,10 @@
             android:name=".CadastroUsuarioActivity"
             android:exported="false"
         />
+        <activity
+            android:name=".WishlistActivity"
+            android:exported="false"
+        />
     </application>
 
 </manifest>
