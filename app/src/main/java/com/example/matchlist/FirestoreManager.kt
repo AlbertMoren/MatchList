@@ -66,4 +66,51 @@ class FirestoreManager(private val db: FirebaseFirestore) {
                 print("Erro ao gravar log: ${e.message}")
             }
     }
+
+    // Nova função que filtra o que o usuário já viu
+    fun buscarProdutosNaoVistos(userUid: String, onResult: (Boolean, List<Map<String, String>>) -> Unit) {
+
+        //olhamos o histórico (logs) do usuário para saber o que ele já curtiu ou descurtiu
+        db.collection("admin_logs")
+            .document(userUid)
+            .collection("logs")
+            .get()
+            .addOnSuccessListener { logs ->
+                val produtosVistos = mutableListOf<String>()
+                for (log in logs) {
+                    val produtoId = log.getString("produtoId")
+                    if (produtoId != null) {
+                        produtosVistos.add(produtoId)
+                    }
+                }
+
+                // 2. Agora buscamos TODOS os produtos da loja
+                db.collection("produtos")
+                    .get()
+                    .addOnSuccessListener { documentos ->
+                        val listaFinal = mutableListOf<Map<String, String>>()
+
+                        for (documento in documentos) {
+                            // Só entra na lista da tela se o ID NÃO estiver na lista de "vistos"
+                            if (!produtosVistos.contains(documento.id)) {
+                                val produto = mapOf(
+                                    "id" to documento.id,
+                                    "nome" to (documento.get("nome")?.toString() ?: ""),
+                                    "preco" to (documento.get("preco")?.toString() ?: "")
+                                )
+                                listaFinal.add(produto)
+                            }
+                        }
+
+                        // Devolvemos apenas a lista filtrada para a tela
+                        onResult(true, listaFinal)
+                    }
+                    .addOnFailureListener {
+                        onResult(false, emptyList())
+                    }
+            }
+            .addOnFailureListener {
+                onResult(false, emptyList())
+            }
+    }
 }
