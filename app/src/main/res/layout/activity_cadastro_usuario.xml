@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
+    android:background="@color/md_background"
     android:padding="24dp"
     android:gravity="center">
 
@@ -10,45 +12,68 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Criar Nova Conta"
-        android:textSize="24sp"
+        android:textSize="26sp"
         android:textStyle="bold"
+        android:textColor="@color/md_primary"
         android:layout_marginBottom="32dp" />
 
-    <EditText
-        android:id="@+id/editNomeCadastro"
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Seu Nome Completo"
-        android:inputType="textPersonName"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp">
 
-    <EditText
-        android:id="@+id/editEmailCadastro"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editNomeCadastro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPersonName" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="E-mail"
-        android:inputType="textEmailAddress"
-        android:layout_marginBottom="16dp" />
+        android:layout_marginBottom="16dp">
 
-    <EditText
-        android:id="@+id/editSenhaCadastro"
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editEmailCadastro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="Senha (mínimo 6 caracteres)"
-        android:inputType="textPassword"
-        android:layout_marginBottom="24dp" />
+        app:endIconMode="password_toggle"
+        android:layout_marginBottom="24dp">
 
-    <Button
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/editSenhaCadastro"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnFinalizarCadastro"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cadastrar e Entrar" />
+        android:layout_height="56dp"
+        android:text="Cadastrar e Entrar"
+        app:backgroundTint="@color/md_primary"
+        app:cornerRadius="12dp" />
 
     <TextView
         android:id="@+id/txtResultadoCadastro"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:textColor="@color/md_text_secondary"
         android:text=""
         android:textSize="16sp" />
 </LinearLayout>

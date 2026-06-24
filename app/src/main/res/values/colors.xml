@@ -7,4 +7,22 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+<!-- adicionando palheta de cores do papoco -->
+    <color name="md_primary">#FF4B00</color>
+    <color name="md_primary_dark">#CC3C00</color>
+    <color name="md_surface">#FFFFFF</color>
+    <color name="md_background">#FFFFFF</color>
+    <color name="md_text_primary">#212121</color>
+
+
+<!--    <color name="md_primary">#5E35B1</color>-->
+<!--    <color name="md_primary_dark">#4527A0</color>-->
+    <color name="md_primary_light">#EDE7F6</color>
+    <color name="md_accent_like">#43A047</color>
+    <color name="md_accent_dislike">#E53935</color>
+<!--   ' <color name="md_background">#FAFAFA</color>-->
+<!--    <color name="md_surface">#FFFFFF</color>-->
+<!--    <color 'name="md_text_primary">#212121</color>-->
+    <color name="md_text_secondary">#757575</color>
 </resources>
