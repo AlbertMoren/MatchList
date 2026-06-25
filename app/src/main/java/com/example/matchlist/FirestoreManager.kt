@@ -26,6 +26,7 @@ class FirestoreManager(private val db: FirebaseFirestore) {
                 onResult(false, e.message ?: "Erro desconhecido ao salvar")
             }
     }
+
     fun BuscarTodosOsProdutos(onResult: (Boolean, List<Map<String,String>>) -> Unit){
         db.collection("produtos")
             .get()
@@ -96,7 +97,8 @@ class FirestoreManager(private val db: FirebaseFirestore) {
                                 val produto = mapOf(
                                     "id" to documento.id,
                                     "nome" to (documento.get("nome")?.toString() ?: ""),
-                                    "preco" to (documento.get("preco")?.toString() ?: "")
+                                    "preco" to (documento.get("preco")?.toString() ?: ""),
+                                    "imagem" to (documento.get("imagem")?.toString() ?: "")
                                 )
                                 listaFinal.add(produto)
                             }
