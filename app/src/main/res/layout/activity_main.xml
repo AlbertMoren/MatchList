@@ -8,14 +8,29 @@
     android:padding="24dp"
     android:gravity="center">
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="MatchList"
-        android:textSize="28sp"
-        android:textStyle="bold"
-        android:textColor="@color/md_primary"
-        android:layout_marginBottom="4dp" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+
+        <ImageView
+            android:id="@+id/imgLogo"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:src="@drawable/ic_papoco"
+            android:layout_marginEnd="8dp"
+            android:contentDescription="Logo MatchList" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="MatchList"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="@color/md_primary" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="wrap_content"
@@ -36,7 +51,8 @@
             android:id="@+id/editEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textEmailAddress" />
+            android:inputType="textEmailAddress"
+            android:textColor="@color/md_text_primary" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.textfield.TextInputLayout
@@ -51,7 +67,8 @@
             android:id="@+id/editSenha"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:textColor="@color/md_text_primary" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.material.button.MaterialButton

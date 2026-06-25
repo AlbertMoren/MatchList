@@ -1,0 +1,4 @@
+<shape xmlns:android="http://schemas.android.com/apk/res/android" android:shape="oval">
+    <stroke android:width="2dp" android:color="@color/md_accent_dislike" />
+    <solid android:color="@android:color/transparent" />
+</shape>
