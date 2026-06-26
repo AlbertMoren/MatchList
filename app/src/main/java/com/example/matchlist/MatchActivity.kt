@@ -1,8 +1,10 @@
 package com.example.matchlist
 
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import android.widget.Button
+import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -11,8 +13,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class MatchActivity : ComponentActivity() {
 
-    private lateinit var btnLike: Button
-    private lateinit var btnDislike: Button
+    private lateinit var btnLike: FrameLayout
+    private lateinit var btnDislike: FrameLayout
     private lateinit var txtStatusMatch: TextView
     private lateinit var txtNomeProduto: TextView
     private lateinit var txtPrecoProduto: TextView
@@ -41,6 +43,9 @@ class MatchActivity : ComponentActivity() {
         txtNomeProduto = findViewById(R.id.txtNomeProduto)
         txtPrecoProduto = findViewById(R.id.txtPrecoProduto)
         imgProduto = findViewById(R.id.imgProduto) // Restaurado
+
+        val cardProduto = findViewById<View>(R.id.cardProduto)
+        configurarGestoDeArrastar(cardProduto)
 
         btnLike.setOnClickListener {
             if (indiceAtual < listaProdutos.size) {
@@ -147,5 +152,65 @@ class MatchActivity : ComponentActivity() {
     private fun desativarBotoes() {
         btnLike.visibility = View.GONE
         btnDislike.visibility = View.GONE
+    }
+
+    // --- NOVO: gesto de arrastar o card (swipe), sem nenhuma biblioteca externa ---
+
+    private fun configurarGestoDeArrastar(card: View) {
+        var dX = 0f
+        var dY = 0f
+
+        card.setOnTouchListener { view, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    dX = view.translationX - event.rawX
+                    dY = view.translationY - event.rawY
+                    true
+                }
+                MotionEvent.ACTION_MOVE -> {
+                    view.translationX = event.rawX + dX
+                    view.translationY = event.rawY + dY
+                    view.rotation = (view.translationX / 20f).coerceIn(-15f, 15f)
+                    true
+                }
+                MotionEvent.ACTION_UP -> {
+                    val limite = view.width * 0.35f
+                    when {
+                        view.translationX > limite -> animarSaida(view, direita = true)
+                        view.translationX < -limite -> animarSaida(view, direita = false)
+                        else -> animarRetornoAoCentro(view)
+                    }
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+
+    private fun animarSaida(view: View, direita: Boolean) {
+        val destinoX = if (direita) 1200f else -1200f
+        view.animate()
+            .translationX(destinoX)
+            .rotation(if (direita) 25f else -25f)
+            .setDuration(250)
+            .withEndAction {
+                // Dispara exatamente o mesmo código que já existia nos botões —
+                // nenhuma lógica de like/dislike/imagem foi duplicada ou alterada.
+                if (direita) btnLike.performClick() else btnDislike.performClick()
+
+                view.translationX = 0f
+                view.translationY = 0f
+                view.rotation = 0f
+            }
+            .start()
+    }
+
+    private fun animarRetornoAoCentro(view: View) {
+        view.animate()
+            .translationX(0f)
+            .translationY(0f)
+            .rotation(0f)
+            .setDuration(200)
+            .start()
     }
 }

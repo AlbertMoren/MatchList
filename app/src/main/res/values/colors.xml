@@ -25,4 +25,5 @@
 <!--    <color name="md_surface">#FFFFFF</color>-->
 <!--    <color 'name="md_text_primary">#212121</color>-->
     <color name="md_text_secondary">#757575</color>
+    <color name="ic_launcher_background">#FFFFFF</color>
 </resources>
