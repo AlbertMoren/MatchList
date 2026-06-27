@@ -6,7 +6,6 @@
     android:id="@+id/MatchScreen"
     android:orientation="vertical"
     android:weightSum="100"
-    android:background="@color/md_background"
     android:padding="24dp">
 
     <TextView
@@ -122,6 +121,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Ver minha WishList"
-        android:textColor="@color/md_primary" />
+        android:textColor="@color/md_primary"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="48dp"/>
 
 </LinearLayout>

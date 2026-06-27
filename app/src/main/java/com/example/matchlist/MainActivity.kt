@@ -1,16 +1,18 @@
 package com.example.matchlist
 
+import android.content.Context
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
+import com.google.android.material.button.MaterialButtonToggleGroup
 import androidx.activity.ComponentActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
-class MainActivity : ComponentActivity() {
+class MainActivity : BaseActivity() {
 
     //backend
     private lateinit var auth: FirebaseAuth
@@ -34,6 +36,7 @@ class MainActivity : ComponentActivity() {
         mapearComponentesXml()
 
         configurarBotoes()
+        configurarSeletorTema()
     }
 
     private fun mapearComponentesXml() {
@@ -71,6 +74,34 @@ class MainActivity : ComponentActivity() {
             } else {
                 txtResultado.text = "Preencha e-mail e senha!"
             }
+        }
+    }
+
+    private fun configurarSeletorTema(){
+        val toggleGroup = findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupTema)
+        val prefs = getSharedPreferences("CONFIG_APP",Context.MODE_PRIVATE)
+
+        if(prefs.getBoolean("MODO_ESCURO",false)){
+            toggleGroup.check(R.id.btnTemaEscuro)
+        }else{
+            toggleGroup.check(R.id.btnTemaClaro)
+        }
+
+        toggleGroup.addOnButtonCheckedListener{ _,checkedId,isChecked ->
+            if (isChecked){
+                val editor = prefs.edit()
+
+                if(checkedId == R.id.btnTemaEscuro){
+                    editor.putBoolean("MODO_ESCURO", true)
+                }else{
+                    editor.putBoolean("MODO_ESCURO", false)
+                }
+
+                editor.apply()
+
+                recreate()
+            }
+
         }
     }
 }
