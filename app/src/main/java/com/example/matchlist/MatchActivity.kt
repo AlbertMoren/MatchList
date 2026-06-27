@@ -7,9 +7,12 @@ import android.widget.Button
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.activity.ComponentActivity
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
+import androidx.lifecycle.lifecycleScope
+import com.example.matchlist.API.ProdutoDto
+import kotlinx.coroutines.launch
+import com.example.matchlist.API.RetrofitClient
 
 class MatchActivity : BaseActivity() {
 
@@ -18,10 +21,9 @@ class MatchActivity : BaseActivity() {
     private lateinit var txtStatusMatch: TextView
     private lateinit var txtNomeProduto: TextView
     private lateinit var txtPrecoProduto: TextView
-    private lateinit var imgProduto: ImageView // Restaurado
+    private lateinit var imgProduto: ImageView
 
     private var userUid: String = ""
-
     private var listaProdutos: List<Map<String, String>> = emptyList()
     private var indiceAtual = 0
 
@@ -42,7 +44,7 @@ class MatchActivity : BaseActivity() {
         txtStatusMatch = findViewById(R.id.txtStatusMatch)
         txtNomeProduto = findViewById(R.id.txtNomeProduto)
         txtPrecoProduto = findViewById(R.id.txtPrecoProduto)
-        imgProduto = findViewById(R.id.imgProduto) // Restaurado
+        imgProduto = findViewById(R.id.imgProduto)
 
         val cardProduto = findViewById<View>(R.id.cardProduto)
         configurarGestoDeArrastar(cardProduto)
@@ -96,45 +98,59 @@ class MatchActivity : BaseActivity() {
     private fun carregarVitrine() {
         txtStatusMatch.text = "Carregando vitrine..."
 
-        btnLike.visibility = View.VISIBLE
-        btnDislike.visibility = View.VISIBLE
-        imgProduto.visibility = View.VISIBLE // Garante que a imagem volta a aparecer
+        // 1. Busca os logs do Firebase
+        firestoreManager.buscarTodosLogs(userUid) { logs ->
+            // 2. Busca os produtos na API
+            lifecycleScope.launch {
+                try {
+                    val produtosDaApi = RetrofitClient.instance.getEletronicos()
 
-        firestoreManager.buscarProdutosNaoVistos(userUid) { sucesso, produtos ->
-            if (sucesso) {
-                if (produtos.isNotEmpty()) {
-                    listaProdutos = produtos
-                    indiceAtual = 0
-                    exibirProdutoAtual()
-                    txtStatusMatch.text = "Produtos carregados!"
-                } else {
-                    txtStatusMatch.text = "Você já viu todos os produtos do estoque!"
-                    txtNomeProduto.text = "Fim da fila!"
-                    txtPrecoProduto.text = "Volte mais tarde."
-                    imgProduto.visibility = View.GONE // Esconde a imagem no fim da fila
-                    desativarBotoes()
+                    // 3. Aplica o filtro usando os logs
+                    val produtosFiltrados = filtrarProdutos(produtosDaApi, logs)
+
+                    // 4. Converte para a lista que a tela usa
+                    listaProdutos = produtosFiltrados.map { produto ->
+                        mapOf(
+                            "id" to "API_${produto.id}",
+                            "nome" to produto.title,
+                            "preco" to produto.price.toString(),
+                            "imagem" to produto.image
+                        )
+                    }
+
+                    // 5. Atualiza a tela
+                    if (listaProdutos.isNotEmpty()) {
+                        indiceAtual = 0
+                        exibirProdutoAtual()
+                        txtStatusMatch.text = "Produtos carregados!"
+                    } else {
+                        txtStatusMatch.text = "Nenhum produto novo disponível."
+                        desativarBotoes()
+                    }
+                } catch (e: Exception) {
+                    txtStatusMatch.text = "Erro na integração: ${e.message}"
                 }
-            } else {
-                txtStatusMatch.text = "Erro: Permissão negada ou sem internet."
-                desativarBotoes()
             }
         }
     }
 
     private fun exibirProdutoAtual() {
         if (indiceAtual < listaProdutos.size) {
+            imgProduto.visibility = View.VISIBLE
+            btnLike.visibility = View.VISIBLE
+            btnDislike.visibility = View.VISIBLE
+            // ---------------------------------------------------------
+
             val produto = listaProdutos[indiceAtual]
             txtNomeProduto.text = produto["nome"]
             txtPrecoProduto.text = "R$ ${produto["preco"]}"
 
-            // O Glide pega a URL do Firebase e joga na tela (Restaurado)
             val urlImagem = produto["imagem"] ?: ""
             if (urlImagem.isNotEmpty()) {
                 Glide.with(this).load(urlImagem).into(imgProduto)
             } else {
                 imgProduto.setImageResource(android.R.color.transparent)
             }
-
         } else {
             txtNomeProduto.text = "Fim da fila!"
             txtPrecoProduto.text = "Você já viu tudo."
@@ -153,8 +169,6 @@ class MatchActivity : BaseActivity() {
         btnLike.visibility = View.GONE
         btnDislike.visibility = View.GONE
     }
-
-    // --- NOVO: gesto de arrastar o card (swipe), sem nenhuma biblioteca externa ---
 
     private fun configurarGestoDeArrastar(card: View) {
         var dX = 0f
@@ -194,10 +208,7 @@ class MatchActivity : BaseActivity() {
             .rotation(if (direita) 25f else -25f)
             .setDuration(250)
             .withEndAction {
-                // Dispara exatamente o mesmo código que já existia nos botões —
-                // nenhuma lógica de like/dislike/imagem foi duplicada ou alterada.
                 if (direita) btnLike.performClick() else btnDislike.performClick()
-
                 view.translationX = 0f
                 view.translationY = 0f
                 view.rotation = 0f
@@ -212,5 +223,27 @@ class MatchActivity : BaseActivity() {
             .rotation(0f)
             .setDuration(200)
             .start()
+    }
+
+    private fun filtrarProdutos(produtosDaApi: List<ProdutoDto>, logsDoUsuario: List<Map<String, Any>>): List<ProdutoDto> {
+        val tresDiasEmMs = 3 * 24 * 60 * 60 * 1000L
+        val agora = System.currentTimeMillis()
+
+        return produtosDaApi.filter { produto ->
+            val logDoProduto = logsDoUsuario.find { it["idProduto"] == "API_${produto.id}" }
+
+            if (logDoProduto == null) {
+                true
+            } else {
+                val tipo = logDoProduto["tipo"] as String
+                val dataLog = logDoProduto["timestamp"] as Long
+
+                if (tipo == "NOVO_DISLIKE") {
+                    (agora - dataLog) > tresDiasEmMs
+                } else {
+                    false
+                }
+            }
+        }
     }
 }
