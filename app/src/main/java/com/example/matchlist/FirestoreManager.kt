@@ -1,12 +1,10 @@
 package com.example.matchlist
 
-import android.R
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FieldValue
 
 class FirestoreManager(private val db: FirebaseFirestore) {
-    fun salvarNaWishlist(uid: String, produtoId: String, produtoNome: String, preco: String, onResult: (Boolean, String) -> Unit) {
 
+    fun salvarNaWishlist(uid: String, produtoId: String, produtoNome: String, preco: String, onResult: (Boolean, String) -> Unit) {
         val dadosProduto = hashMapOf(
             "id" to produtoId,
             "nome" to produtoNome,
@@ -27,92 +25,64 @@ class FirestoreManager(private val db: FirebaseFirestore) {
             }
     }
 
-    fun BuscarTodosOsProdutos(onResult: (Boolean, List<Map<String,String>>) -> Unit){
-        db.collection("produtos")
-            .get()
-            .addOnSuccessListener { documentos ->
-                val lista = mutableListOf<Map<String,String>>()
-
-                for (documento in documentos){
-                    val produto = mapOf(
-                        "id" to documento.id,
-                        "nome" to (documento.getString("nome") ?: ""),
-                        "preco" to (documento.get("preco")?.toString() ?: "")
-                    )
-                    lista.add(produto)
-                }
-
-                onResult(true,lista)
-            }
-            .addOnFailureListener {
-                onResult(false,emptyList())
-            }
-    }
-
-    fun registrarLog(acao: String, userId: String, produtoId: String) {
-        val dadosLog = hashMapOf(
-            "acao" to acao,
-            "produtoId" to produtoId,
-            "dataHora" to FieldValue.serverTimestamp()
+    // Função que registra os logs no banco de dados
+    fun registrarLog(tipo: String, userUid: String, idProduto: String) {
+        val log = hashMapOf(
+            "idProduto" to idProduto,
+            "tipo" to tipo,
+            "timestamp" to System.currentTimeMillis()
         )
 
+        // Caminho: admin_logs / userUid / logs / (auto-id)
         db.collection("admin_logs")
-            .document(userId)
+            .document(userUid)
             .collection("logs")
-            .add(dadosLog)
-            .addOnSuccessListener {
-                print("Log gravado com sucesso na pasta do usuário: $acao")
-            }
-            .addOnFailureListener { e ->
-                print("Erro ao gravar log: ${e.message}")
-            }
+            .add(log)
     }
 
-    // Nova função que filtra o que o usuário já viu
-    fun buscarProdutosNaoVistos(userUid: String, onResult: (Boolean, List<Map<String, String>>) -> Unit) {
-
-        //olhamos o histórico (logs) do usuário para saber o que ele já curtiu ou descurtiu
+    fun buscarTodosLogs(userUid: String, callback: (List<Map<String, Any>>) -> Unit) {
         db.collection("admin_logs")
             .document(userUid)
             .collection("logs")
             .get()
-            .addOnSuccessListener { logs ->
-                val produtosVistos = mutableListOf<String>()
-                for (log in logs) {
-                    val produtoId = log.getString("produtoId")
-                    if (produtoId != null) {
-                        produtosVistos.add(produtoId)
-                    }
-                }
+            .addOnSuccessListener { snapshot ->
+                val logs = snapshot.documents.map { it.data as Map<String, Any> }
+                callback(logs)
+            }
+            .addOnFailureListener {
+                callback(emptyList()) // Retorna vazio se der erro
+            }
+    }
 
-                // 2. Agora buscamos TODOS os produtos da loja
-                db.collection("produtos")
+    // CORRIGIDO: Agora acessa os caminhos corretos da sua estrutura
+    fun removerDaWishlistEResetarLog(userUid: String, idProduto: String, callback: (Boolean) -> Unit) {
+        // Passo 1: Deletar direto da wishlist do usuário
+        db.collection("users")
+            .document(userUid)
+            .collection("wishlist")
+            .document(idProduto) // Usamos o ID do produto direto como ID do documento
+            .delete()
+            .addOnSuccessListener {
+
+                // Passo 2: Procurar e deletar o log na subcoleção de logs do usuário
+                db.collection("admin_logs")
+                    .document(userUid)
+                    .collection("logs")
+                    .whereEqualTo("idProduto", idProduto)
                     .get()
-                    .addOnSuccessListener { documentos ->
-                        val listaFinal = mutableListOf<Map<String, String>>()
-
-                        for (documento in documentos) {
-                            // Só entra na lista da tela se o ID NÃO estiver na lista de "vistos"
-                            if (!produtosVistos.contains(documento.id)) {
-                                val produto = mapOf(
-                                    "id" to documento.id,
-                                    "nome" to (documento.get("nome")?.toString() ?: ""),
-                                    "preco" to (documento.get("preco")?.toString() ?: ""),
-                                    "imagem" to (documento.get("imagem")?.toString() ?: "")
-                                )
-                                listaFinal.add(produto)
-                            }
+                    .addOnSuccessListener { logsSnapshot ->
+                        for (logDoc in logsSnapshot.documents) {
+                            logDoc.reference.delete()
                         }
-
-                        // Devolvemos apenas a lista filtrada para a tela
-                        onResult(true, listaFinal)
+                        // Sucesso total
+                        callback(true)
                     }
                     .addOnFailureListener {
-                        onResult(false, emptyList())
+                        callback(false)
                     }
             }
             .addOnFailureListener {
-                onResult(false, emptyList())
+                callback(false)
             }
     }
 }
