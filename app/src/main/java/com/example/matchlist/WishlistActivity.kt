@@ -8,7 +8,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.google.firebase.firestore.FirebaseFirestore
 
-class WishlistActivity : ComponentActivity() {
+class WishlistActivity : BaseActivity() {
 
     private lateinit var db: FirebaseFirestore
     private lateinit var firestoreManager: FirestoreManager

@@ -11,7 +11,7 @@ import androidx.activity.ComponentActivity
 import com.bumptech.glide.Glide
 import com.google.firebase.firestore.FirebaseFirestore
 
-class MatchActivity : ComponentActivity() {
+class MatchActivity : BaseActivity() {
 
     private lateinit var btnLike: FrameLayout
     private lateinit var btnDislike: FrameLayout
