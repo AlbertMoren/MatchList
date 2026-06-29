@@ -4,5 +4,9 @@
         <item name="colorPrimary">@color/md_primary</item>
         <item name="colorOnPrimary">@color/md_surface</item>
         <item name="colorSecondary">@color/md_primary_dark</item>
+
+        <item name="android:windowBackground">@color/md_background</item>
+        <item name="android:statusBarColor">@color/md_primary_dark</item>
+        <item name="android:windowLightStatusBar">true</item>
     </style>
 </resources>

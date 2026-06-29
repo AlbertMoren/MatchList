@@ -1,3 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">MatchList</string>
+    <string name="app_name" translatable="false">MatchList</string>
+
+    <!-- Geral -->
+    <string name="theme_light">Tema claro</string>
+    <string name="theme_dark">Tema escuro</string>
+    <string name="loading">Carregando…</string>
+    <string name="error_generic">Erro: %1$s</string>
+
+    <!-- Login-->
+    <string name="login_logo_desc">Logo MatchList</string>
+    <string name="login_subtitle">Entre para continuar</string>
+    <string name="login_email_label">E-mail</string>
+    <string name="login_password_label">Senha</string>
+    <string name="login_forgot_password">Esqueci a senha</string>
+    <string name="login_enter_button" >Entrar</string>
+    <string name="login_create_account">Criar nova conta</string>
+    <string name="login_fill_fields">Preencha e-mail e senha!</string>
+    <string name="login_loading">Carregando…</string>
+    <string name="login_error_prefix">Falha no login: %1$s</string>
+    <string name="login_forgot_fill_email">Digite seu e-mail para redefinir a senha!</string>
+
+    <!-- Cadastro  -->
+    <string name="cadastro_title">Criar Nova Conta</string>
+    <string name="cadastro_name_label">Seu Nome Completo</string>
+    <string name="cadastro_password_label">Senha (mínimo 6 caracteres)</string>
+    <string name="cadastro_button">Cadastrar e Entrar</string>
+    <string name="cadastro_fill_fields">Preencha todos os campos!</string>
+    <string name="cadastro_creating">Criando conta…</string>
+    <string name="cadastro_error_prefix">Erro: %1$s</string>
+
+    <!--  Navegação principal -->
+    <string name="nav_match">Match</string>
+    <string name="nav_wishlist">Wishlist</string>
+    <string name="nav_profile">Perfil</string>
+
+    <!--  Match -->
+    <string name="match_status_loading">Buscando produtos…</string>
+    <string name="match_status_empty">Nenhum produto encontrado.</string>
+    <string name="match_status_done">Você viu todos os produtos!\nVolte outro dia.</string>
+    <string name="match_status_error">Erro ao carregar: %1$s</string>
+    <string name="match_no_image">Sem imagem</string>
+    <string name="match_label_like">LIKE</string>
+    <string name="match_label_nope">NOPE</string>
+    <string name="match_action_like">Curtir</string>
+    <string name="match_action_dislike">Pular</string>
+
+    <!--  Wishlist  -->
+    <string name="wishlist_title">Minha Wishlist</string>
+    <string name="wishlist_empty">Sua wishlist está vazia!\nVolte para a Vitrine e curta alguns produtos.</string>
+    <string name="wishlist_back_button">Voltar para a Vitrine</string>
+    <string name="wishlist_item_no_name">Sem nome</string>
+
+    <!-- Perfil  -->
+    <string name="profile_title">Meu Perfil</string>
+    <string name="profile_section_personal">Dados pessoais</string>
+    <string name="profile_section_address">Endereço</string>
+    <string name="profile_name_label">Nome completo</string>
+    <string name="profile_email_label">E-mail</string>
+    <string name="profile_cep_label">CEP</string>
+    <string name="profile_street_label">Rua</string>
+    <string name="profile_number_label">Nº</string>
+    <string name="profile_neighborhood_label">Bairro</string>
+    <string name="profile_city_label">Cidade</string>
+    <string name="profile_state_label">UF</string>
+    <string name="profile_save_button">Salvar alterações</string>
+    <string name="profile_save_success">Dados salvos com sucesso!</string>
+    <string name="profile_save_error">Erro ao salvar: %1$s</string>
+    <string name="profile_logout_button">Sair da conta</string>
+    <string name="profile_delete_account">Deletar conta</string>
+
+    <!-- Diálogo de exclusão de conta -->
+    <string name="delete_dialog_title">Deletar conta</string>
+    <string name="delete_dialog_body">Esta ação é permanente e não pode ser desfeita. Digite sua senha para confirmar.</string>
+    <string name="delete_dialog_password_label">Sua senha atual</string>
+    <string name="delete_dialog_confirm">Deletar</string>
+    <string name="delete_dialog_cancel">Cancelar</string>
+    <string name="delete_error_wrong_password">Senha incorreta.</string>
+    <string name="delete_error_generic">Erro: %1$s</string>
+
+    <!--  AuthManager  -->
+    <string name="auth_save_error">Erro ao salvar dados: %1$s</string>
+    <string name="auth_register_unknown_error">Erro desconhecido ao cadastrar</string>
+    <string name="auth_login_unknown_error">Erro desconhecido ao fazer login</string>
+    <string name="auth_reset_email_sent">E-mail de redefinição enviado! Verifique sua caixa de entrada.</string>
+    <string name="auth_reset_invalid_email">E-mail mal formatado. Verifique o endereço digitado.</string>
+    <string name="auth_reset_user_not_found">Não existe nenhuma conta cadastrada com este e-mail.</string>
+    <string name="auth_reset_unknown_error">Erro desconhecido ao redefinir a senha</string>
+
+    <!--  FirestoreManager  -->
+    <string name="firestore_save_success">Salvo com sucesso na Wishlist!</string>
+    <string name="firestore_save_error" >Erro desconhecido ao salvar</string>
 </resources>

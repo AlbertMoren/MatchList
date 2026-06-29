@@ -2,106 +2,161 @@ package com.example.matchlist
 
 import android.content.Context
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
-import com.google.android.material.button.MaterialButtonToggleGroup
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.matchlist.ui.screens.CadastroScreen
+import com.example.matchlist.ui.screens.LoginScreen
+import com.example.matchlist.ui.screens.MainScreen
+import com.example.matchlist.ui.theme.MatchListTheme
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 
+object RootRoutes {
+    const val LOGIN    = "login"
+    const val CADASTRO = "cadastro"
+    const val HOME     = "home/{userUid}"
+    fun home(uid: String) = "home/$uid"
+}
 
-class MainActivity : BaseActivity() {
+class MainActivity : ComponentActivity() {
 
-    //backend
     private lateinit var auth: FirebaseAuth
     private lateinit var authManager: AuthManager
 
-    //elementos de tela (XML)
-    private lateinit var editEmail: EditText
-    private lateinit var editSenha: EditText
-    private lateinit var btnCadastrar: Button
-    private lateinit var btnEntrar: Button
-    private lateinit var txtResultado: TextView
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
         auth = Firebase.auth
-        val db = com.google.firebase.firestore.FirebaseFirestore.getInstance()
-        authManager = AuthManager(auth,db)
+        authManager = AuthManager(auth, FirebaseFirestore.getInstance())
 
-        mapearComponentesXml()
+        val prefs = getSharedPreferences("CONFIG_APP", Context.MODE_PRIVATE)
 
-        configurarBotoes()
-        configurarSeletorTema()
-    }
+        setContent {
+            val systemDark = isSystemInDarkTheme()
+            var isDarkTheme by remember {
+                mutableStateOf(prefs.getBoolean("MODO_ESCURO", systemDark))
+            }
 
-    private fun mapearComponentesXml() {
-        editEmail = findViewById(R.id.editEmail)
-        editSenha = findViewById(R.id.editSenha)
-        btnCadastrar = findViewById(R.id.btnCadastrar)
-        btnEntrar = findViewById(R.id.btnEntrar)
-        txtResultado = findViewById(R.id.txtResultado)
-    }
+            MatchListTheme(darkTheme = isDarkTheme) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    val navController = rememberNavController()
+                    val startDest = if (auth.currentUser != null)
+                        RootRoutes.home(auth.currentUser!!.uid)
+                    else
+                        RootRoutes.LOGIN
 
-    private fun configurarBotoes() {
+                    NavHost(navController = navController, startDestination = startDest) {
 
-        btnCadastrar.setOnClickListener {
-            val intent = android.content.Intent(this, CadastroUsuarioActivity::class.java)
-            startActivity(intent)
-        }
+                        // login
+                        composable(RootRoutes.LOGIN) {
+                            var resultado by remember { mutableStateOf("") }
 
-        btnEntrar.setOnClickListener {
-            val email = editEmail.text.toString()
-            val senha = editSenha.text.toString()
+                            LoginScreen(
+                                isDarkTheme = isDarkTheme,
+                                onToggleTheme = { dark ->
+                                    isDarkTheme = dark
+                                    prefs.edit().putBoolean("MODO_ESCURO", dark).apply()
+                                },
+                                onEntrar = { email, senha ->
+                                    if (email.isNotEmpty() && senha.isNotEmpty()) {
+                                        resultado = getString(R.string.login_loading)
+                                        authManager.loginUsuario(email, senha) { ok, uid, resId, arg ->
+                                            if (ok && uid != null) {
+                                                navController.navigate(RootRoutes.home(uid)) {
+                                                    popUpTo(RootRoutes.LOGIN) { inclusive = true }
+                                                }
+                                            } else {
+                                                val msg = if (arg != null) getString(resId, arg)
+                                                else getString(resId)
+                                                resultado = getString(R.string.login_error_prefix, msg)
+                                            }
+                                        }
+                                    } else {
+                                        resultado = getString(R.string.login_fill_fields)
+                                    }
+                                },
+                                onCadastrar = { navController.navigate(RootRoutes.CADASTRO) },
+                                onEsqueciSenha = { email ->
+                                    if (email.isNotEmpty()) {
+                                        authManager.resetarSenha(email) { _, resId, arg ->
+                                            resultado = if (arg != null) getString(resId, arg)
+                                            else getString(resId)
+                                        }
+                                    } else {
+                                        resultado = getString(R.string.login_forgot_fill_email)
+                                    }
+                                },
+                                resultado = resultado
+                            )
+                        }
 
-            if (email.isNotEmpty() && senha.isNotEmpty()) {
-                txtResultado.text = "Carregando..."
+                        // cadastro
+                        composable(RootRoutes.CADASTRO) {
+                            var resultado by remember { mutableStateOf("") }
 
-                authManager.loginUsuario(email, senha) { sucesso, resposta ->
-                    if (sucesso) {
-                        val intent = android.content.Intent(this, MatchActivity::class.java)
-                        intent.putExtra("USER_UID",resposta)
-                        startActivity(intent)
-                        finish()
-                    } else {
-                        txtResultado.text = "❌ Falha no login: $resposta"
+                            CadastroScreen(
+                                isDarkTheme = isDarkTheme,
+                                onToggleTheme = { dark ->
+                                    isDarkTheme = dark
+                                    prefs.edit().putBoolean("MODO_ESCURO", dark).apply()
+                                },
+                                onCadastrar = { nome, email, senha ->
+                                    if (nome.isNotEmpty() && email.isNotEmpty() && senha.isNotEmpty()) {
+                                        resultado = getString(R.string.cadastro_creating)
+                                        authManager.cadastrarUsuario(nome, email, senha) { ok, uid, resId, arg ->
+                                            if (ok && uid != null) {
+                                                navController.navigate(RootRoutes.home(uid)) {
+                                                    popUpTo(RootRoutes.LOGIN) { inclusive = true }
+                                                }
+                                            } else {
+                                                val msg = if (arg != null) getString(resId, arg)
+                                                else getString(resId)
+                                                resultado = getString(R.string.cadastro_error_prefix, msg)
+                                            }
+                                        }
+                                    } else {
+                                        resultado = getString(R.string.cadastro_fill_fields)
+                                    }
+                                },
+                                resultado = resultado
+                            )
+                        }
+
+                        // home
+                        composable(RootRoutes.HOME) { backStack ->
+                            val userUid = backStack.arguments?.getString("userUid") ?: ""
+                            MainScreen(
+                                userUid = userUid,
+                                isDarkTheme = isDarkTheme,
+                                onToggleTheme = { dark ->
+                                    isDarkTheme = dark
+                                    prefs.edit().putBoolean("MODO_ESCURO", dark).apply()
+                                },
+                                onSair = {
+                                    authManager.deslogarUsuario()
+                                    navController.navigate(RootRoutes.LOGIN) {
+                                        popUpTo(0) { inclusive = true }
+                                    }
+                                }
+                            )
+                        }
                     }
                 }
-            } else {
-                txtResultado.text = "Preencha e-mail e senha!"
             }
-        }
-    }
-
-    private fun configurarSeletorTema(){
-        val toggleGroup = findViewById<MaterialButtonToggleGroup>(R.id.toggleGroupTema)
-        val prefs = getSharedPreferences("CONFIG_APP",Context.MODE_PRIVATE)
-
-        if(prefs.getBoolean("MODO_ESCURO",false)){
-            toggleGroup.check(R.id.btnTemaEscuro)
-        }else{
-            toggleGroup.check(R.id.btnTemaClaro)
-        }
-
-        toggleGroup.addOnButtonCheckedListener{ _,checkedId,isChecked ->
-            if (isChecked){
-                val editor = prefs.edit()
-
-                if(checkedId == R.id.btnTemaEscuro){
-                    editor.putBoolean("MODO_ESCURO", true)
-                }else{
-                    editor.putBoolean("MODO_ESCURO", false)
-                }
-
-                editor.apply()
-
-                recreate()
-            }
-
         }
     }
 }
