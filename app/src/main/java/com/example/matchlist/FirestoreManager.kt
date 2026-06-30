@@ -4,7 +4,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 
 class FirestoreManager(private val db: FirebaseFirestore) {
 
-    fun salvarNaWishlist(uid: String, produtoId: String, produtoNome: String, preco: String, onResult: (Boolean, String) -> Unit) {
+    fun salvarNaWishlist(uid: String, produtoId: String, produtoNome: String, preco: String, onResult: (ok: Boolean, msgResId: Int, msgArg: String?) -> Unit) {
         val dadosProduto = hashMapOf(
             "id" to produtoId,
             "nome" to produtoNome,
@@ -18,11 +18,24 @@ class FirestoreManager(private val db: FirebaseFirestore) {
             .document(produtoId)
             .set(dadosProduto)
             .addOnSuccessListener {
-                onResult(true, "Salvo com sucesso na Wishlist!")
+                onResult(true, R.string.firestore_save_success, null)
             }
             .addOnFailureListener { e ->
-                onResult(false, e.message ?: "Erro desconhecido ao salvar")
+                onResult(false, R.string.firestore_save_error, e.message)
             }
+    }
+    fun buscarWishlist(userUid: String, callback: (List<Map<String, Any>>) -> Unit) {
+        db.collection("users").document(userUid)
+            .collection("wishlist").get()
+            .addOnSuccessListener { snap ->
+                val lista = snap.documents.map { doc ->
+                    val data = doc.data?.toMutableMap() ?: mutableMapOf()
+                    data["id"] = doc.getString("id") ?: doc.getString("idProduto") ?: doc.id
+                    data
+                }
+                callback(lista)
+            }
+            .addOnFailureListener { callback(emptyList()) }
     }
 
     // Função que registra os logs no banco de dados

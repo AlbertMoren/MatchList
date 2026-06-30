@@ -46,6 +46,7 @@ dependencies {
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.ui)
     testImplementation(libs.junit)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
@@ -64,4 +65,8 @@ dependencies {
     // e eu adicinei essas -baiano
     implementation("com.google.android.material:material:1.12.0")
     androidTestImplementation("androidx.test:rules:1.5.0")
+
+    implementation("androidx.navigation:navigation-compose:2.8.0") // migrando pro compose
+    implementation("androidx.compose.material:material-icons-extended:1.6.8") // icones
+    implementation("io.coil-kt:coil-compose:2.6.0") // opcional: imagens remotas
 }

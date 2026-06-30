@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">MatchList</string>
+
+    <string name="theme_light">浅色主题</string>
+    <string name="theme_dark">深色主题</string>
+    <string name="loading">正在加载…</string>
+    <string name="error_generic">错误: %1$s</string>
+
+    <string name="login_logo_desc">MatchList 标志</string>
+    <string name="login_subtitle">登录以继续</string>
+    <string name="login_email_label">电子邮箱</string>
+    <string name="login_password_label">密码</string>
+    <string name="login_forgot_password">忘记密码</string>
+    <string name="login_enter_button">登录</string>
+    <string name="login_create_account">创建新账户</string>
+    <string name="login_fill_fields">请填写电子邮箱和密码！</string>
+    <string name="login_loading">正在加载…</string>
+    <string name="login_error_prefix">登录失败: %1$s</string>
+    <string name="login_forgot_fill_email">输入您的电子邮箱以重置密码！</string>
+
+    <string name="cadastro_title">创建新账户</string>
+    <string name="cadastro_name_label">您的全名</string>
+    <string name="cadastro_password_label">密码（至少6个字符）</string>
+    <string name="cadastro_button">注册并登录</string>
+    <string name="cadastro_fill_fields">请填写所有字段！</string>
+    <string name="cadastro_creating">正在创建账户…</string>
+    <string name="cadastro_error_prefix">错误: %1$s</string>
+
+    <string name="nav_match">匹配</string>
+    <string name="nav_wishlist">愿望清单</string>
+    <string name="nav_profile">个人资料</string>
+
+    <string name="match_status_loading">正在寻找产品…</string>
+    <string name="match_status_empty">未找到产品。</string>
+    <string name="match_status_done">您已浏览所有产品！\n改天再来看看。</string>
+    <string name="match_status_error">加载错误: %1$s</string>
+    <string name="match_no_image">无图片</string>
+    <string name="match_label_like">喜欢</string>
+    <string name="match_label_nope">跳过</string>
+    <string name="match_action_like">喜欢</string>
+    <string name="match_action_dislike">跳过</string>
+
+    <string name="wishlist_title">我的愿望清单</string>
+    <string name="wishlist_empty">您的愿望清单是空的！\n回到展示区去收藏一些产品吧。</string>
+    <string name="wishlist_back_button">返回展示区</string>
+    <string name="wishlist_item_no_name">无名称</string>
+
+    <string name="profile_title">个人资料</string>
+    <string name="profile_section_personal">个人信息</string>
+    <string name="profile_section_address">地址</string>
+    <string name="profile_name_label">全名</string>
+    <string name="profile_email_label">电子邮箱</string>
+    <string name="profile_cep_label">邮政编码</string>
+    <string name="profile_street_label">街道</string>
+    <string name="profile_number_label">门牌号</string>
+    <string name="profile_neighborhood_label">社区/街区</string>
+    <string name="profile_city_label">城市</string>
+    <string name="profile_state_label">州/省</string>
+    <string name="profile_save_button">保存更改</string>
+    <string name="profile_save_success">数据保存成功！</string>
+    <string name="profile_save_error">保存时出错: %1$s</string>
+    <string name="profile_logout_button">退出账户</string>
+    <string name="profile_delete_account">注销账户</string>
+
+    <string name="delete_dialog_title">注销账户</string>
+    <string name="delete_dialog_body">此操作是永久性的，无法撤销。请输入您的密码以确认。</string>
+    <string name="delete_dialog_password_label">您的当前密码</string>
+    <string name="delete_dialog_confirm">注销</string>
+    <string name="delete_dialog_cancel">取消</string>
+    <string name="delete_error_wrong_password">密码错误。</string>
+    <string name="delete_error_generic">错误: %1$s</string>
+
+    <string name="auth_save_error">保存数据时出错: %1$s</string>
+    <string name="auth_register_unknown_error">注册时发生未知错误</string>
+    <string name="auth_login_unknown_error">登录时发生未知错误</string>
+    <string name="auth_reset_email_sent">重置邮件已发送！请检查您的收件箱。</string>
+    <string name="auth_reset_invalid_email">邮箱格式不正确。请检查输入的地址。</string>
+    <string name="auth_reset_user_not_found">未找到使用此电子邮箱注册的账户。</string>
+    <string name="auth_reset_unknown_error">重置密码时发生未知错误</string>
+
+    <string name="firestore_save_success">成功保存到愿望清单！</string>
+    <string name="firestore_save_error">保存时发生未知错误</string>
+</resources>
